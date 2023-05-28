@@ -6,7 +6,7 @@
     "clean": "npm run clean:windows && npm run clean:linux",
     "clean:windows": "node -e \"if (process.platform === 'win32') process.exit(1)\" || , if exist build rmdir /Q /S build",
     "clean:linux": "node -e \"if (process.platform !== 'win32') process.exit(1)\" || rm -rf build",
-    "build": "tsc --build",
+    "build": "eslint . --ext .ts && tsc --build",
     "start": "npm run build && node build/src/index.js",
     "lint": "eslint . --ext .ts"
   },

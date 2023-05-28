@@ -1,4 +1,6 @@
-export default interface IAuth {
+type Auth = {
     username: string,
     password: string
-}
+};
+
+export default Auth;

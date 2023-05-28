@@ -1,7 +1,7 @@
 import { Bot, BotEvents, createBot } from "mineflayer";
 
-import IConfig from "./config/IConfig";
-import IAuth from "./config/IAuth";
+import { Config, configDefaults } from "./config/Config";
+import Auth from "./config/Auth";
 
 import createLogger from "./logger/createLogger";
 
@@ -12,9 +12,6 @@ import EventList from "./events";
 import ManagersList from "./managers";
 
 export default class BotClient {
-    private events = new Map<string, IBotEvent>();
-    private managers = new Map<string, IManager>();
-
     // dc erau private, dale drq sa poate sa fie folosite de eventuri/comenzi
     public config;
     public auth;
@@ -24,10 +21,16 @@ export default class BotClient {
 
     public connected = false;
     public spawned = false;
-    public loggedin = false;
+    public loggedIn = false;
 
-    constructor(config: IConfig, auth: IAuth) {
-        this.config = config;
+    private events = new Map<string, IBotEvent>();
+    private managers = new Map<string, IManager>();
+
+    constructor(config: Config, auth: Auth) {
+        this.config = {
+            ...configDefaults,
+            ...config
+        };
         this.auth = auth;
 
         this.logger = createLogger({
@@ -76,9 +79,32 @@ export default class BotClient {
                 if(this.spawned) {
                     clearTimeout(timeout);
                     resolve();
+                } else if(!this.connected) {
+                    clearTimeout(timeout);
+                    reject("Bot was disconnected.");
                 }
             }, 100);
         });
+    }
+
+    waitForLogin() {
+        return new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(() => reject("Bot didn't login in time."), 60000);
+
+            setInterval(() => {
+                if(this.loggedIn) {
+                    clearTimeout(timeout);
+                    resolve();
+                } else if(!this.connected) {
+                    clearTimeout(timeout);
+                    reject("Bot was disconnected.");
+                }
+            }, 100);
+        });
+    }
+
+    sendLogin() {
+        this.bot.chat(`/login ${this.auth.password}`);
     }
 
     loadEvents() {
@@ -95,6 +121,7 @@ export default class BotClient {
                     this.bot.on(event.name as keyof BotEvents, handler);
                 }
     
+                this.events.set(event.name, event);
                 ok++;
             } catch(err) {
                 this.logger.error("Failed to load event.", err);
@@ -117,6 +144,7 @@ export default class BotClient {
             username: this.auth.username,
             version: this.config.version
         });
+        this.connected = true;
 
         this.logger.info("Loading events...");
         this.loadEvents();
@@ -125,5 +153,11 @@ export default class BotClient {
         await this.loadManagers();
 
         this.logger.info("Bot started.");
+        this.logger.info("Sending login...");
+        await this.waitForSpawn();
+        this.sendLogin();
+
+        await this.waitForLogin();
+        this.logger.info("Successfully logged in.");
     }
 }
