@@ -10,7 +10,7 @@ import IBotEvent from "./events/IBotEvent";
 import IManager from "./managers/IManager";
 
 import EventList from "./events";
-import ManagersList from "./managers";
+import ManagerList from "./managers";
 
 export default class BotClient {
     // dc erau private, dale drq sa poate sa fie folosite de eventuri/comenzi
@@ -135,7 +135,14 @@ export default class BotClient {
     }
 
     async loadManagers() {
-        return;
+        for(const managerClass of ManagerList) {
+            const manager: IManager = new managerClass(this);
+            
+            await manager.init();
+            this.managers.set(managerClass.name, manager);
+
+            this.logger.info("Loaded " + managerClass.name);
+        }
     }
 
     async startBot() {

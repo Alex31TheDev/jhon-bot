@@ -1,3 +1,5 @@
+import BotClient from "../BotClient";
+
 export default interface IManager {
-    load(): void;
+    init(): void | Promise<void>;
 }
