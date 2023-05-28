@@ -39,7 +39,6 @@ export default class BaseCommand implements ICommand {
         return this.handler(client, args, username);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public handler(client: BotClient, ..._: unknown[]) {
         client.say("test command");
     }
