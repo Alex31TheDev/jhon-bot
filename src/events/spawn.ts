@@ -6,11 +6,6 @@ export default class spawn implements IBotEvent {
     
     handler(client: BotClient) {
         client.logger.info("Bot spawned.");
-        
-        if(client.spawned) {
-            client.joined = true;
-        } else {
-            client.spawned = true;
-        }
+        client.spawned = true;
     }
 }

@@ -23,7 +23,6 @@ export default class BotClient {
     public connected = false;
     public spawned = false;
     public loggedIn = false;
-    public joined = false;
 
     private events = new Map<string, IBotEvent>();
     private managers = new Map<string, IManager>();
@@ -79,6 +78,8 @@ export default class BotClient {
             setInterval(() => {
                 if(this.spawned) {
                     clearTimeout(timeout);
+
+                    this.spawned = false;
                     resolve();
                 } else if(!this.connected) {
                     clearTimeout(timeout);
@@ -99,19 +100,6 @@ export default class BotClient {
                 } else if(!this.connected) {
                     clearTimeout(timeout);
                     reject("Bot was disconnected.");
-                }
-            }, 100);
-        });
-    }
-
-    waitForJoin() {
-        return new Promise<void>((resolve, reject) => {
-            const timeout = setTimeout(() => reject("Bot didn't join section in time."), 60000);
-
-            setInterval(() => {
-                if(this.joined) {
-                    clearTimeout(timeout);
-                    resolve();
                 }
             }, 100);
         });
@@ -167,8 +155,8 @@ export default class BotClient {
         await this.loadManagers();
 
         this.logger.info("Bot started.");
-        this.logger.info("Sending login...");
         await this.waitForSpawn();
+        this.logger.info("Sending login...");
         this.sendLogin();
 
         await this.waitForLogin();
@@ -180,10 +168,10 @@ export default class BotClient {
         this.bot.setQuickBarSlot(0);
         this.bot.activateItem();
 
-        await Util.delay(500);
+        await Util.delay(300);
         this.bot.clickWindow(18, 0, 0);
 
-        await this.waitForJoin();
+        await this.waitForSpawn();
         this.logger.info("Successfully joined section.");
     }
 }
