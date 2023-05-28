@@ -4,12 +4,11 @@ type Config = {
     version: string,
     prefix: string,
     cliPrefix: string,
-    settings: {
-        toggletpa: boolean
-    },
     logFile: string,
     consoleIsChat: boolean,
-    toggleTpa: boolean
+    toggleTpa: boolean,
+    enableChatCommands: boolean,
+    enableCLICommands: boolean
 };
 
 const configDefaults = {

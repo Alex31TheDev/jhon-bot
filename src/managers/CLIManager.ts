@@ -38,7 +38,11 @@ export default class CLIManager extends BaseCommandManager {
     }
 
     private async handleInput(input: string) {
-        if(!await this.executeCmd(input)) {
+        if(this.client.config.enableCLICommands) {
+            if(!await this.executeCmd(input)) {
+                this.client.bot.chat(input);
+            }
+        } else {
             this.client.bot.chat(input);
         }
     }

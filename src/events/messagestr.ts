@@ -18,6 +18,8 @@ export default class messagestr implements IBotEvent {
             client.bot.chat("/tpaccept");
         }
 
-        await client.managers.CommandManager.executeCmd(msg);
+        if(client.config.enableChatCommands) {
+            await client.managers.CommandManager?.executeCmd(msg);
+        }
     }
 }
