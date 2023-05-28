@@ -3,6 +3,7 @@ import { Bot, BotEvents, createBot } from "mineflayer";
 import { Config, configDefaults } from "./config/Config";
 import Auth from "./config/Auth";
 
+import Util from "./Util";
 import createLogger from "./logger/createLogger";
 
 import IBotEvent from "./events/IBotEvent";
@@ -22,6 +23,7 @@ export default class BotClient {
     public connected = false;
     public spawned = false;
     public loggedIn = false;
+    public joined = false;
 
     private events = new Map<string, IBotEvent>();
     private managers = new Map<string, IManager>();
@@ -69,7 +71,6 @@ export default class BotClient {
             ],
         });
     }
-
     
     waitForSpawn() {
         return new Promise<void>((resolve, reject) => {
@@ -98,6 +99,19 @@ export default class BotClient {
                 } else if(!this.connected) {
                     clearTimeout(timeout);
                     reject("Bot was disconnected.");
+                }
+            }, 100);
+        });
+    }
+
+    waitForJoin() {
+        return new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(() => reject("Bot didn't join section in time."), 60000);
+
+            setInterval(() => {
+                if(this.joined) {
+                    clearTimeout(timeout);
+                    resolve();
                 }
             }, 100);
         });
@@ -159,5 +173,17 @@ export default class BotClient {
 
         await this.waitForLogin();
         this.logger.info("Successfully logged in.");
+    }
+
+    async joinSection() {
+        this.logger.info("Joining section...");
+        this.bot.setQuickBarSlot(0);
+        this.bot.activateItem();
+
+        await Util.delay(500);
+        this.bot.clickWindow(18, 0, 0);
+
+        await this.waitForJoin();
+        this.logger.info("Successfully joined section.");
     }
 }
