@@ -6,5 +6,6 @@
     "settings": {
         "toggletpa": false
     },
-    "logFile": "logs/debug.log"
+    "logFile": "logs/debug.log",
+    "consoleischat": false
 }

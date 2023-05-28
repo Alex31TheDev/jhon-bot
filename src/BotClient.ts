@@ -12,17 +12,19 @@ import EventList from "./events";
 import ManagersList from "./managers";
 
 export default class BotClient {
-    private config;
-    private auth;
-
     private events = new Map<string, IBotEvent>();
     private managers = new Map<string, IManager>();
+
+    // dc erau private, dale drq sa poate sa fie folosite de eventuri/comenzi
+    public config;
+    public auth;
     
     public bot!: Bot;
     public logger;
 
     public connected = false;
     public spawned = false;
+    public loggedin = false;
 
     constructor(config: IConfig, auth: IAuth) {
         this.config = config;
@@ -65,6 +67,7 @@ export default class BotClient {
         });
     }
 
+    
     waitForSpawn() {
         return new Promise<void>((resolve, reject) => {
             const timeout = setTimeout(() => reject("Bot didn't spawn in time."), 60000);

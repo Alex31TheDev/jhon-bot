@@ -6,5 +6,6 @@ export default interface IConfig {
     settings: {
         toggletpa: boolean
     },
-    logFile: string
+    logFile: string,
+    consoleischat: boolean
 }
