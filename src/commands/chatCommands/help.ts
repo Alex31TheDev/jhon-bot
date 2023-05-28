@@ -3,6 +3,7 @@ import BaseCommand from "../BaseCommand";
 
 export default class help extends BaseCommand {
     public name = "help";
+    public wlonly = false;
 
     public handler(client: BotClient) {
         const cmdNames = client.managers.CommandManager.commands.filter(x => !x.isSubcmd).map(x => {

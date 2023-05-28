@@ -6,7 +6,7 @@ import Util from "../Util";
 export default class BaseCommand implements ICommand {
     public name = "base";
     public enabled = true;
-    public wlonly = false;
+    public wlonly = true;
 
     public description = "";
     public usage = "";
