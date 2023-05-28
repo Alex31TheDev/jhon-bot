@@ -1,17 +1,15 @@
 import readline from "readline/promises";
 
-import BotClient from "../BotClient";
-import IManager from "./IManager";
+import CommandList from "../commands/cliCommands";
+import BaseCommandManager from "./BaseCommandManager";
 
-export default class CLIManager implements IManager {
-    private client;
+export default class CLIManager extends BaseCommandManager {
+    protected cmdPrefix = this.client.config.cliPrefix;
     private rl!: readline.Interface;
 
-    constructor(client: BotClient) {
-        this.client = client;
-    }
+    public init() {
+        this.loadCommands(CommandList);
 
-    init() {
         const rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout
@@ -21,14 +19,27 @@ export default class CLIManager implements IManager {
         this.inputLoop();
     }
 
-    async inputLoop() {
+    protected say(msg: string) {
+        this.client.logger.info(msg);
+    }
+
+    protected parseMsg(msg: string) {
+        return {
+            username: "",
+            content: msg
+        };
+    }
+
+    private async inputLoop() {
         while(true) {
             const input = await this.rl.question("");
             this.handleInput(input);
         }
     }
 
-    handleInput(input: string) {
-        this.client.bot.chat(input);
+    private async handleInput(input: string) {
+        if(!await this.executeCmd(input)) {
+            this.client.bot.chat(input);
+        }
     }
 }

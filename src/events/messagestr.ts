@@ -4,17 +4,20 @@ import IBotEvent from "./IBotEvent";
 export default class messagestr implements IBotEvent {
     public name = "messagestr";
     
-    handler(client: BotClient, message: string) {
-        // DE FACUT LISTENER LA CONSOLE INPUT SA POTI TRIMITE MESAJE DIN CONSOLA
+    public async handler(client: BotClient, msg: string) {
         if(client.config.consoleIsChat) {
-            client.logger.info(message);
+            client.logger.info(msg);
         }
 
-        if(message.startsWith("Gamster ▸ You have been logged in!")) {
+        if(msg.startsWith("Gamster ▸ You have been logged in!")) {
             client.loggedIn = true;
             return;
         }
 
-        
+        if(client.config.toggleTpa && msg.includes("/tpdeny")) {
+            client.bot.chat("/tpaccept");
+        }
+
+        await client.managers.CommandManager.executeCmd(msg);
     }
 }

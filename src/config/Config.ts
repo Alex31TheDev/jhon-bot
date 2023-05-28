@@ -3,11 +3,13 @@ type Config = {
     server_port: number,
     version: string,
     prefix: string,
+    cliPrefix: string,
     settings: {
         toggletpa: boolean
     },
     logFile: string,
-    consoleIsChat: boolean
+    consoleIsChat: boolean,
+    toggleTpa: boolean
 };
 
 const configDefaults = {

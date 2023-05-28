@@ -3,9 +3,11 @@
     "server_port": 25565,
     "version": "1.12.2",
     "prefix": "!",
+    "cliPrefix": ".",
     "settings": {
         "toggletpa": false
     },
     "logFile": "logs/debug.log",
-    "consoleIsChat": true
+    "consoleIsChat": true,
+    "toggleTpa": false
 }
