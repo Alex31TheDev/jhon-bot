@@ -8,6 +8,7 @@ export default interface ICommand {
     
     parent?: string;
     description?: string;
+    usage?: string;
     aliases?: string[];
     subcmdNames?: string[];
 

@@ -6,7 +6,7 @@ export default class help extends BaseCommand {
 
     public handler(client: BotClient) {
         const cmdNames = client.managers.CLIManager.commands.filter(x => !x.isSubcmd).map(x => {
-            if(x.aliases.length > 0) {
+            if(x.aliases) {
                 return [x.name].concat(x.aliases).join("/");
             }
 

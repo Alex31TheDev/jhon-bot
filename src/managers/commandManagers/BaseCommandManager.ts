@@ -1,7 +1,7 @@
-import BotClient from "../BotClient";
-import Util from "../Util";
-import BaseCommand from "../commands/BaseCommand";
-import IManager from "./IManager";
+import BotClient from "../../BotClient";
+import Util from "../../Util";
+import BaseCommand from "../../commands/BaseCommand";
+import IManager from "../IManager";
 
 type ParsedMsg = {
     username: string,
@@ -56,15 +56,19 @@ export default abstract class BaseCommandManager implements IManager {
 
         for(const commandClass of CommandList) {
             try {
-                const command: BaseCommand = new commandClass();
+                const cmd: BaseCommand = new commandClass();
 
-                if(command.enabled) {
-                    command.say = this.say.bind(this);
+                if(cmd.parent) {
+                    cmd.isSubcmd = true;
+                }
 
-                    this.commands.push(command);
+                if(cmd.enabled) {
+                    cmd.say = this.say.bind(this);
+
+                    this.commands.push(cmd);
                     ok++;
                 } else {
-                    this.client.logger.info(`Not loading command ${command.name}, disabled.`);
+                    this.client.logger.info(`Not loading command ${cmd.name}, disabled.`);
                 }
             } catch(err) {
                 this.client.logger.error("Failed to load event.", err);
@@ -77,24 +81,24 @@ export default abstract class BaseCommandManager implements IManager {
     }
 
     private loadSubcommands() {
-        this.commands.forEach(x => {
-            if(x.isSubcmd || x.subcmdNames.length < 1) {
+        for(const cmd of this.commands) {
+            if(cmd.isSubcmd || !cmd.subcmdNames) {
                 return;
             }
 
-            x.subcmdNames.forEach(n => {
+            cmd.subcmdNames.forEach(n => {
                 const find = this.commands.find(y => {
-                    return y.name === n && y.parent === x.name;
+                    return y.name === n && y.parent === cmd.name;
                 });
 
                 if(typeof find === "undefined") {
-                    this.client.logger.error(`Subcommand "${n}" of command "${x.name}" not found.`);
+                    this.client.logger.error(`Subcommand "${n}" of command "${cmd.name}" not found.`);
                     return;
                 }
 
-                x.subcmds.set(find.name, find);
+                cmd.subcmds.set(find.name, find);
             });
-        });
+        }
     }
 
     private isCmd(str: string) {
@@ -103,7 +107,7 @@ export default abstract class BaseCommandManager implements IManager {
 
     private searchCmds(name: string) {
         return this.commands.find(x => {
-            if(x.aliases.length > 0) {
+            if(x.aliases) {
                 return (x.name === name || x.aliases.includes(name)) && !x.isSubcmd;
             }
             

@@ -9,6 +9,7 @@ import createLogger from "./logger/createLogger";
 import IBotEvent from "./events/IBotEvent";
 import EventList from "./events";
 import Managers from "./managers/Managers";
+import Handlers from "./handlers/Handlers";
 
 export default class BotClient {
     // dc erau private, dale drq sa poate sa fie folosite de eventuri/comenzi
@@ -16,14 +17,15 @@ export default class BotClient {
     public auth;
     
     public bot!: Bot;
+    public managers!: Managers;
+    public handlers!: Handlers;
+
     public logger;
+    public events = new Map<string, IBotEvent>();
 
     public connected = false;
     public spawned = false;
     public loggedIn = false;
-
-    public managers!: Managers;
-    private events = new Map<string, IBotEvent>();
 
     constructor(config: Config, auth: Auth) {
         this.config = {
@@ -96,6 +98,10 @@ export default class BotClient {
         this.logger.info("Loading managers...");
         this.managers = new Managers(this);
         await this.managers.init();
+
+        this.logger.info("Loading handlers...");
+        this.handlers = new Handlers(this);
+        this.handlers.init();
 
         this.logger.info("Bot started.");
         await this.waitForSpawn();

@@ -1,6 +1,6 @@
 import readline from "readline/promises";
 
-import CommandList from "../commands/cliCommands";
+import CommandList from "../../commands/cliCommands";
 import BaseCommandManager from "./BaseCommandManager";
 
 export default class CLIManager extends BaseCommandManager {

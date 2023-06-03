@@ -1,4 +1,4 @@
-import CommandList from "../commands/chatCommands";
+import CommandList from "../../commands/chatCommands";
 import BaseCommandManager from "./BaseCommandManager";
 
 const msgExp = /.+\s(\w+)\s?[›:].(.+)/;

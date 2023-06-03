@@ -3,21 +3,21 @@ import ICommand from "./ICommand";
 
 import Util from "../Util";
 
-export default class BaseCommand implements ICommand {
-    public name = "base";
+abstract class BaseCommand implements ICommand {
+    public abstract name: string;
+    public abstract wlonly: boolean;
+
+    public isSubcmd!: boolean;
     public enabled = true;
-    public wlonly = true;
-
-    public description = "";
-    public usage = "";
-
-    public isSubcmd = false;
-    public parent = "";
-    public aliases: string[] = [];
-    public subcmdNames: string[] = [];
 
     public subcmds = new Map<string, BaseCommand>();
     public say!: (msg: string) => void;
+
+    public parent?: string;
+    public description?: string;
+    public usage?: string;
+    public aliases?: string[];
+    public subcmdNames?: string[];
 
     private helpArgs = ["-h", "-help"];
 
@@ -54,18 +54,23 @@ export default class BaseCommand implements ICommand {
     private getHelp() {
         let help = "";
 
-        if(this.description.length > 0) {
+        if(this.description) {
             help += `Description: ${this.description}`;
 
-            if(this.usage.length > 0) {
+            if(this.usage) {
                 help += ", ";
             }
         }
 
-        if(this.usage.length > 0) {
+        if(this.usage) {
             help += `Usage: ${this.usage}`;
         }
         
         return help === "" ? "This command has no help." : help;
     }
+}
+
+export default class extends BaseCommand {
+    name = "";
+    wlonly = true;
 }

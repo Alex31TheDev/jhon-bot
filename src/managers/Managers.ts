@@ -1,7 +1,7 @@
 import BotClient from "../BotClient";
 
-import CLIManager from "./CLIManager";
-import CommandManager from "./CommandManager";
+import CLIManager from "./commandManagers/CLIManager";
+import CommandManager from "./commandManagers/CommandManager";
 import PermissionManager from "./PermissionManager";
 
 export default class Managers {

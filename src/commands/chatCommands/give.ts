@@ -36,3 +36,18 @@ module.exports = {
         
     }
 }
+
+import BotClient from "../../BotClient";
+import BaseCommand from "../BaseCommand";
+
+export default class psay extends BaseCommand {
+    public name = "give";
+
+    public handler(client: BotClient, args: string, username: string) {
+        if(args.length < 1) {
+            return this.say("[SYNTAX] psay [string]");
+        }
+
+        this.say(args);
+    }
+}
